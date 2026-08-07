@@ -118,6 +118,18 @@ def _extract_ltp_functions(elf_path: str) -> List[str]:
     return [symbol.name[: -len("_main")] for symbol in ltp_symbols]
 
 
+def _extract_ltp_applications(bindir: str) -> List[str]:
+    """Extract LTP test applications (ltp_*) from a binary directory.
+
+    Kernel builds install every application as a standalone binary, so
+    the test cases are file names instead of symbols in the OS image.
+    """
+    if not bindir or not os.path.isdir(bindir):
+        return []
+
+    return sorted(name for name in os.listdir(bindir) if name.startswith("ltp_"))
+
+
 def load_task_config() -> Dict[str, Any]:
     """Load task configuration from default_config.yaml"""
     try:
@@ -167,8 +179,11 @@ def pytest_generate_tests(metafunc):
         )
         return
 
-    # Extract LTP test cases directly from ELF
-    ltp_cases = _extract_ltp_functions(elf_path)
+    # Extract LTP test cases from the application binaries on kernel
+    # builds, from the OS image symbols otherwise
+    ltp_cases = _extract_ltp_applications(main_core_conf.get("app_bindir", ""))
+    if not ltp_cases:
+        ltp_cases = _extract_ltp_functions(elf_path)
 
     if not ltp_cases:
         logging.warning("No LTP test cases found in ELF file")
