@@ -9,7 +9,8 @@ NuttX image requirements for tests:
 
 - ``CONFIG_DEBUG_SYMBOLS`` must be set.
 
-- NSH must be enabled and set as entry point
+- NSH must be enabled (``CONFIG_SYSTEM_NSH``); the init entry point may be
+  either ``nsh_main`` or ``init_main`` (nxinit)
 
 - ``CONFIG_DEBUG_FEATURES=y`` and ``CONFIG_DEBUG_ASSERTIONS=y``
   are recommended.

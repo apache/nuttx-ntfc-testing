@@ -22,4 +22,3 @@ module: "Nuttx_System"
 requirements:
   - ["CONFIG_DEBUG_SYMBOLS", True]
   - ["CONFIG_SYSTEM_NSH", True]
-  - ["CONFIG_INIT_ENTRYPOINT", "nsh_main"]
